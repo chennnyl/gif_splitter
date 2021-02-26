@@ -3,7 +3,7 @@ from sys import argv, exit
 from os import mkdir
 
 import logging
-logging.basicConfig(format="%(levelname)s: %(message)s")
+logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
 argv = argv[1:]
 
@@ -28,6 +28,7 @@ example = (50, 50)
 try:
     mkdir("out/" + folder_name)
 except:
+    logging.info("out/" + folder_name + " already exists")
     pass
 
 col_size = im.size[0] / columns
@@ -44,7 +45,10 @@ for i,cell in enumerate(cells):
 
     for frame in range(im.n_frames):
 
-        cells[i][0].append( imit[frame].crop((col_size*x, row_size*y, col_size*(x+1), row_size*(y+1))) )
+        newcell = imit[frame].crop((col_size*x, row_size*y, col_size*(x+1), row_size*(y+1)))
+        newcell = newcell.crop((8, 8, newcell.size[0]-16, newcell.size[1]-16))
+
+        cells[i][0].append( newcell )
 
     if len(cells[i][0]) == 1:
         logging.warn("Only found 1 image; saving anyway")
@@ -52,4 +56,4 @@ for i,cell in enumerate(cells):
     else:
         cells[i][0][0].save("out/" + folder_name + "/" + folder_name + str(cell[1]) + ".gif", save_all = True, duration = 100, append_images = cells[i][0][1:])
 
-    logging.info(f"Finished frame {i}")
+    logging.info(f"Finished cell {i+1}")
