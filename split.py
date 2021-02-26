@@ -26,7 +26,7 @@ folder_name = "".join(filename.split(".")[:-1])
 example = (50, 50)
 
 try:
-    mkdir(folder_name)
+    mkdir("out/" + folder_name)
 except:
     pass
 
